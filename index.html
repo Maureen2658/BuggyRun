@@ -106,55 +106,98 @@
     const carmode = document.getElementById('carMode')
     // 速度
     let step = 1
-  
-    
-    // 初始xY轴距离
-    let positionCar = {
+
+     // 初始xY轴距离
+     let positionCar = {
         Y: 0,
-        X: 0
+        X: 0,
+        direction: 37,
+        directionName: 'ArrowRight'
     }
+
+    // 缓存
+    const Task4_Key = JSON.parse(localStorage.getItem('Task4_Key')) || {}
+   
     // 获取父容器的宽度
+
+    // 恢复初始值
+    function initData(){
+        if(JSON.parse(localStorage.getItem('Task4_Key'))) {
+            const state = JSON.parse(localStorage.getItem('Task4_Key'))
+            if(state.positionCar) {
+                positionCar = state.positionCar
+                directionMove(positionCar.direction, positionCar.directionName, false)
+            }
+
+          
+            level.value= +state.level || 1
+            step = +level.value
+            carmode.value = state.carmode || 1
+
+            img.src=`./assets/car${carmode.value}.png`
+            car.style.transform=`translate(${positionCar.X}px, ${positionCar.Y}px)`
+
+        }
+    }
+    initData()
 
     function move (e) {
         if(![37,38,39,40].includes(e.keyCode)) return
-       
+        directionMove(e.keyCode, e.key)
+        car.style.transform=`translate(${positionCar.X}px, ${positionCar.Y}px)`
+        // 存缓存
+        Task4_Key.positionCar=positionCar
+        localStorage.setItem('Task4_Key', JSON.stringify(Task4_Key))
+    }
+    // 移动方向判断， 恢复初始值的时候不需要移动，不然会有偏差
+    function directionMove(code, name, moveBol = true){
+        positionCar.direction = code
+        positionCar.directionName = name
         // // 位置翻转
-        if([39, 37].includes(e.keyCode)) {
+        if([39, 37].includes(code)) {
             // X轴的移动距离
-            positionCar.X = e.keyCode ===37 ? positionCar.X-step : positionCar.X + step
-            img.style.transform=`rotateY(${e.keyCode===37 ? 180 :0}deg)`
+            if(moveBol) {
+                positionCar.X = code ===37 ? positionCar.X-step : positionCar.X + step
+            }
+            img.style.transform=`rotateY(${code===37 ? 180 :0}deg)`
            
         } else {
             // y轴的移动距离
-           
-            positionCar.Y = e.keyCode ===38 ? positionCar.Y-step : positionCar.Y + step
-            img.style.transform=`rotate(${e.keyCode===38 ? -90 :90}deg)`
+           if(moveBol) {
+            positionCar.Y = code ===38 ? positionCar.Y-step : positionCar.Y + step
+           }
+            img.style.transform=`rotate(${code===38 ? -90 :90}deg)`
         }
-        console.log(positionCar);
-        car.style.transform=`translate(${positionCar.X}px, ${positionCar.Y}px)`
+
+    }
+    // 选择速度
+     level.addEventListener('change', function(e){
+         step = +level.value
+         Task4_Key.level = step
+         localStorage.setItem('Task4_Key', JSON.stringify(Task4_Key))
+     })
+
+    //   选择车型
+    carmode.addEventListener('change', function(){
+      Task4_Key.carmode = carmode.value
+      img.src=`./assets/car${carmode.value}.png`
+      localStorage.setItem('Task4_Key', JSON.stringify(Task4_Key))
+    })
+   //   禁止下拉选项被上下左右控制的事件
+    function defaultSelect(e){
+    	var keyCode = window.event ? e.keyCode : e.which;
+    	if(e.preventDefault){
+    		if(keyCode==37||keyCode==38||keyCode==39||keyCode==40){
+    			e.preventDefault();
+    		}
+    	}else{
+    		if(keyCode==37||keyCode==38||keyCode==39||keyCode==40){
+    			window.event.returnValue == false;
+    		}
+    	}
     }
 
-  level.addEventListener('change', function(e){
-      step = +level.value
 
-  })
-  carmode.addEventListener('change', function(){
-    console.log(carmode.value);
-    img.src=`./assets/car${carmode.value}.png`
-  })
-//   禁止下拉选项被上下左右控制的事件
-function defaultSelect(e){
-	var keyCode = window.event ? e.keyCode : e.which;
-	if(e.preventDefault){
-		if(keyCode==37||keyCode==38||keyCode==39||keyCode==40){
-			e.preventDefault();
-		}
-	}else{
-		if(keyCode==37||keyCode==38||keyCode==39||keyCode==40){
-			window.event.returnValue == false;
-		}
-	}
-}
 
 </script>
 </html>
