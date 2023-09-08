@@ -69,8 +69,8 @@
             <select id="level" onkeydown="defaultSelect(event)">
                 <option value="1">1</option>
                 <option value="2">2</option>
+                <option value="3">3</option>
                 <option value="4">4</option>
-                <option value="5">5</option>
                 <option value="5">5</option>
                 <option value="6">6</option>
                 <option value="7">7</option>
@@ -112,7 +112,7 @@
     // 父元素盒子
     const activeRegion = document.getElementsByClassName('activeRegion')[0]
 
-    console.log(activeRegion.offsetHeight, img.offsetHeight);
+    console.log(activeRegion.offsetHeight, img.offsetHeight, img.offsetWidth);
     // 速度
     let step = 1
 
@@ -215,7 +215,6 @@
     	var keyCode = window.event ? e.keyCode : e.which;
     	if(e.preventDefault){
     		if(keyCode==37||keyCode==38||keyCode==39||keyCode==40){
-                console.log('禁止默认事件');
     			e.preventDefault();
     		}
     	}else{
@@ -225,6 +224,36 @@
     	}
     }
     
+    
+
+    //  在主盒子那不定时的创建障碍物。
+    // 每次选择速度的时候都会清除定时器，然后开启障碍物出现的定时器
+
+    // const barrierList = []
+
+    // // 随机地点
+    // function randomImg(){
+    //     let obj = {
+    //         X: Math.floor(Math.random() * (activeRegion.offsetWidth-car.offsetWidth)),
+    //         Y: Math.floor(Math.random() * (activeRegion.offsetHeight-car.offsetHeight))
+    //     }
+    //    barrierList.push(obj)
+    //     console.log(barrierList, 'LIST');
+    // }
+    //  function barrier(){
+    //     pylonBox = document.createElement('div')
+    //     pylon=document.createElement('img')
+    //     pylonBox.setAttribute('class', 'car')
+    //     pylon.setAttribute('class', 'img')
+    //     pylon.src='./assets/southeast.jpg'
+    //     pylonBox.appendChild(pylon)
+    //      randomImg()
+    //     pylonBox.style.transform=`translate(${barrierList[0].X}px, ${barrierList[0].Y}px)`
+
+    //     activeRegion.appendChild(pylonBox)
+    // }
+    // barrier()
+
 
 
 
