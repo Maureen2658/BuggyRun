@@ -10,7 +10,6 @@
         width: 100%;
         height: 100%;
         box-sizing: border-box;
-        overflow: hidden;
     }
     body{
         width: 100%;
@@ -20,7 +19,7 @@
         box-sizing: border-box;
     }
     .filterBox{
-        width: 30%;
+        width: 800px;
         height: 120px;
         margin: auto;
         display: flex;
@@ -32,8 +31,7 @@
 
     }
     .activeRegion{
-        
-        width: 30%;
+        width: 800px;
         height: 40%;
         border: 1px solid #000;
         position: absolute;
@@ -43,7 +41,9 @@
     }
     .car{
         position: absolute;
-        width: 8%;
+        top: 0px;
+        left: 0px;
+        width: 40px;
         height: 40px;
         display: flex;
         .img{
@@ -66,7 +66,7 @@
     <div class="filterBox">
         <div class="filter">
             <label>速度：</label>
-            <select id="level" onkeydown="defaultSelect(event)">
+            <select id="level">
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="4">4</option>
@@ -81,7 +81,7 @@
         </div>
         <div class="filter">
             <label>车型：</label>
-            <select id="carMode" onkeydown="defaultSelect(event)">
+            <select id="carMode">
                 <option value="1">拖拉机</option>
                 <option value="2">卡车</option>
                 <option value="3">摩托车</option>
@@ -142,7 +142,9 @@
             carmode.value = state.carmode || 1
 
             img.src=`./assets/car${carmode.value}.png`
-            car.style.transform=`translate(${positionCar.X}px, ${positionCar.Y}px)`
+            // car.style.transform=`translate(${positionCar.X}px, ${positionCar.Y}px)`
+            car.style.top=`${positionCar.Y}px`
+            car.style.left=`${positionCar.X}px`
 
         }
     }
@@ -151,7 +153,9 @@
     function move (e) {
         if(![37,38,39,40].includes(e.keyCode)) return
         directionMove(e.keyCode, e.key)
-        car.style.transform=`translate(${positionCar.X}px, ${positionCar.Y}px)`
+        // car.style.transform=`translate(${positionCar.X}px, ${positionCar.Y}px)`
+        car.style.top=`${positionCar.Y}px`
+            car.style.left=`${positionCar.X}px`
         // 存缓存
         Task4_Key.positionCar=positionCar
         localStorage.setItem('Task4_Key', JSON.stringify(Task4_Key))
@@ -201,13 +205,16 @@
     }
     // 选择速度
      level.addEventListener('change', function(e){
+        console.log('触发速度');
          step = +level.value
          Task4_Key.level = step
          localStorage.setItem('Task4_Key', JSON.stringify(Task4_Key))
      })
+     level.addEventListener('keydown', defaultSelect)
 
     //   选择车型
     carmode.addEventListener('change', function(){
+        console.log('更改车');
       Task4_Key.carmode = carmode.value
       img.src=`./assets/car${carmode.value}.png`
       localStorage.setItem('Task4_Key', JSON.stringify(Task4_Key))
@@ -229,6 +236,47 @@
     }
     
 
+    // 发布订阅模式
+    const bus = (function(){
+        // 创建调度中心
+        const eventList=[]
+
+        // 订阅者注册事件到调度中心
+       on = (key, fn) => {
+        if(!eventList[key]) {
+            eventList[key] = []
+        }
+        eventList.push(fn)
+        }
+
+        // 发布消息
+        emit = (key) => {
+            eventList[key].forEach(m => m())
+        }
+
+        // 删除订阅
+
+        off = (key, fn) => {
+            let fns = eventList[fn]
+            if(!fns) return false
+            if(!fn) {
+                fns && (fns.length=0)
+            } else {
+                fns.forEach((m,i) => {
+                    if(m===fn) {
+                        fns.splice(1,i)
+                    }
+                })
+            }
+
+        }
+        return {
+            on, 
+            off,
+            emit
+        }
+
+    })
 
 
 </script>
